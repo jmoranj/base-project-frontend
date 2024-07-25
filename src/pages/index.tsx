@@ -1,34 +1,35 @@
+// pages/index.js
+import { useEffect, useState } from "react";
 import Layout from "@/components/Layaout";
 import Title from "@/components/Title";
 import TransactionTable from "@/components/TransactionTable";
 import Balance from "@/components/Balance";
 import TransactionContainer from "@/components/TransactionContainer";
-import { useEffect, useState } from "react";
+import api from "./api/api";
 import { Transaction } from "@/types/transactions";
 
 export default function Home() {
-
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const staticTransactions: Transaction[] = [
-      {
-        id: "1",
-        description: "Óculos de sol",
-        value: 36.00,
-        date: new Date(2024, 6, 23),
-        category: "Saida",
-      },
-    ];
+    const fetchTransactions = async () => {
+      try {
+        const response = await api.get('/transactions');
+        console.log(response.data);
+        setTransactions(response.data);
+      } catch (error) {
+        console.error('Error fetching transactions', error);
+      }
+    };
 
-    setTransactions(staticTransactions);
+    fetchTransactions();
   }, []);
 
   const handleModalOpen = () => setIsModalOpen(true);
   const handleModalClose = () => setIsModalOpen(false);
 
-  return (<>
+  return (
     <Layout>
       <TransactionContainer>
         <Title />
@@ -40,7 +41,5 @@ export default function Home() {
         <TransactionTable transactions={transactions} />
       </TransactionContainer>
     </Layout>
-
-  </>
   );
 }

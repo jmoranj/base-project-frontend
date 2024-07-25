@@ -1,5 +1,5 @@
 export type RegisterFormData = {
-	username: string;
+	name: string;
 	age: number;
 	photo: FileList;
 	email: string;

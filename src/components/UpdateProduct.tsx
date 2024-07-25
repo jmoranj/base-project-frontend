@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Transaction } from '@/types/transactions';
 import Modal from './Modal';
+import Cookies from 'js-cookie';
 
 interface UpdateProductProps {
 	isOpen: boolean;
@@ -22,7 +23,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({ isOpen, onClose, product,
 		}
 	}, [product]);
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (product) {
@@ -32,8 +33,28 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({ isOpen, onClose, product,
 				value: typeof price === 'number' ? price : parseFloat(price),
 				category
 			};
-			onUpdate(updatedProduct);
-			onClose();
+
+			const token = Cookies.get('accessToken'); 
+
+			try {
+				const response = await fetch(`http://localhost:3000/transactions/${product.id}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}` 
+					},
+					body: JSON.stringify(updatedProduct),
+				});
+
+				if (!response.ok) {
+					throw new Error('Erro ao atualizar transação');
+				}
+
+				onUpdate(updatedProduct);
+				onClose();
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	};
 

@@ -1,15 +1,33 @@
+// pages/login.tsx
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 import { LoginFormData } from '@/types/users';
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginFormData>();
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    console.log('Login data submitted:', data);
     try {
-      const response = await axios.post('/api/login', data);
-      console.log(response.data);
+      const response = await axios.post('http://localhost:3000/users/login', data);
+      
+
+      console.log('Response data:', response.data);
+      
+      const { token } = response.data;
+      console.log('Token received:', token);
+
+      if (token) {
+        
+        Cookies.set('accessToken', token, { expires: 1 }); 
+        router.push('/');
+      } else {
+        console.error('No token received');
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const apiErrors = error.response?.data?.errors;
@@ -20,28 +38,24 @@ export default function Login() {
               message: apiErrors[key],
             });
           });
+        } else {
+          console.error('API Error:', error.message);
         }
       } else {
-        console.error('Erro desconhecido:', error);
+        console.error('Unknown error:', error);
       }
     }
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-        />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+    <div className="flex min-h-screen items-center justify-center px-6 py-12 bg-gray-50">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold">Login</h1>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 rounded-md shadow-md">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email</label>
             <div className="mt-2">
               <input
                 id="email"
@@ -55,12 +69,7 @@ export default function Login() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-              </div>
-            </div>
+            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Senha</label>
             <div className="mt-2">
               <input
                 id="password"
@@ -74,12 +83,12 @@ export default function Login() {
           </div>
 
           <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            Sign in
+            Entrar
           </button>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member? <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Start a 14 day free trial</a>
+          Não possui uma conta? <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">cadastre-se</a>
         </p>
       </div>
     </div>

@@ -3,12 +3,30 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { RegisterFormData } from '@/types/users';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
-export default function Register() {
+export default function RegisterForm() {
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<RegisterFormData>();
+  const router = useRouter();
 
-  const onSubmit: SubmitHandler<RegisterFormData> = data => {
+  const onSubmit: SubmitHandler<RegisterFormData> = async data => {
     console.log(data);
+    try {
+      const response = await axios.post('http://localhost:3000/users/register', { ...data, photo: 'https://google.com' });
+
+      console.log('Response data:', response.data);
+
+      if (response.status === 200) {
+
+        router.push('/');
+      } else {
+        console.error('No token received');
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
   };
 
   return (
@@ -19,10 +37,10 @@ export default function Register() {
           <label className="text-sm text-gray-700 dark:text-gray-200 mr-2">Seu nome:</label>
           <input
             type="text"
-            {...register('username', { required: 'Username is required' })}
+            {...register('name', { required: 'Username is required' })}
             className="w-full px-3 dark:text-gray-200 dark:bg-gray-900 py-2 rounded-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {errors.username && <span className="text-red-500">{errors.username.message}</span>}
+          {errors.name && <span className="text-red-500">{errors.name.message}</span>}
         </div>
 
         <div className="flex items-start flex-col justify-start">
