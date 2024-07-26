@@ -49,9 +49,6 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 bg-gray-50">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold">Login</h1>
-      </div>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 rounded-md shadow-md">
           <div>
@@ -88,7 +85,7 @@ export default function Login() {
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
-          Não possui uma conta? <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">cadastre-se</a>
+          Não possui uma conta? <a href="/login/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">cadastre-se</a>
         </p>
       </div>
     </div>

@@ -9,6 +9,13 @@ interface BalanceProps {
   handleModalClose: () => void;
 }
 
+const formatToBRL = (value: number) => {
+  return value.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+};
+
 export default function Balance({ transactions, isModalOpen, handleModalOpen, handleModalClose }: BalanceProps) {
   const [balance, setBalance] = useState<number>(0);
   const [lastTransactionDate, setLastTransactionDate] = useState<Date | null>(null);
@@ -47,7 +54,7 @@ export default function Balance({ transactions, isModalOpen, handleModalOpen, ha
         <div className="flex justify-between pt-6 font-medium text-gray-900 sm:block sm:pt-0">
           <dt>Saldo atual</dt>
           <dd className="sm:mt-1">
-            {balance < 0 ? `-$${Math.abs(balance).toFixed(2)}` : `$${balance.toFixed(2)}`}
+            {formatToBRL(balance)}
           </dd>
         </div>
       </dl>

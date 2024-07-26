@@ -6,6 +6,13 @@ interface ITransactionTable {
   transactions: Transaction[];
 }
 
+const formatToBRL = (value: number) => {
+  return value.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+};
+
 export default function TransactionTable({ transactions }: ITransactionTable) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -57,12 +64,12 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
                         <div className="flex items-center">
                           <div>
                             <div className="font-medium text-gray-900">{item.description}</div>
-                            <div className="mt-1 sm:hidden">{item.value.toFixed(2)}</div>
+                            <div className="mt-1 sm:hidden">{formatToBRL(item.value)}</div>
                           </div>
                         </div>
                       </td>
                       <td className={`py-6 pr-8 ${getPriceColor(item.category)} hidden sm:table-cell text-right`}>
-                        {item.value.toFixed(2)}
+                        {formatToBRL(item.value)}
                       </td>
                       <td className="hidden py-6 pr-8 text-right sm:table-cell">
                         {new Date(item.date).toLocaleDateString()}
