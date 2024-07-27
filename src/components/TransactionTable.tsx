@@ -1,6 +1,6 @@
-import { Transaction } from "@/types/transactions";
-import UpdateProduct from "./UpdateProduct";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import { Transaction } from '@/types/transactions';
+import UpdateProduct from './UpdateProduct';
 
 interface ITransactionTable {
   transactions: Transaction[];
@@ -16,6 +16,11 @@ const formatToBRL = (value: number) => {
 export default function TransactionTable({ transactions }: ITransactionTable) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [userTransactions, setUserTransactions] = useState<Transaction[]>(transactions);
+
+  useEffect(() => {
+    setUserTransactions(transactions);
+  }, [transactions]);
 
   const handleModalOpen = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -27,8 +32,38 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
     setSelectedTransaction(null);
   };
 
-  const handleUpdate = (updatedTransaction: Transaction) => {
-    console.log("Transação atualizada:", updatedTransaction);
+  const handleUpdate = async (updatedTransaction: Transaction) => {
+    console.log('Transação atualizada:', updatedTransaction);
+
+    const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
+
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:4000/transactions/${updatedTransaction.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedTransaction),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao atualizar transação');
+      }
+
+      setUserTransactions(prevTransactions =>
+        prevTransactions.map(transaction =>
+          transaction.id === updatedTransaction.id ? updatedTransaction : transaction
+        )
+      );
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+    }
   };
 
   const getPriceColor = (type: string) => {
@@ -58,7 +93,7 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
                   </tr>
                 </thead>
                 <tbody className="border-b border-gray-200 divide-y divide-gray-200 text-sm sm:border-t">
-                  {transactions.map(item => (
+                  {userTransactions.map(item => (
                     <tr key={item.id}>
                       <td className="py-6 pr-8 text-left">
                         <div className="flex items-center">

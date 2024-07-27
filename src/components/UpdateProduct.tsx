@@ -37,7 +37,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({ isOpen, onClose, product,
 			const token = Cookies.get('accessToken'); 
 
 			try {
-				const response = await fetch(`http://localhost:3000/transactions/${product.id}`, {
+				const response = await fetch(`http://localhost:4000/transactions/${product.id}`, {
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',

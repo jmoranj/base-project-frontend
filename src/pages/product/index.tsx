@@ -1,4 +1,4 @@
-import Layout from "@/components/Layaout";
+import Layout from "@/components/Layout";
 
 export default function Product() {
     return (<>

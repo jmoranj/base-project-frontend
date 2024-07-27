@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import AddProduct from './AddProduct';
+import AddTransaction from './AddTransaction';
 import { Transaction } from '@/types/transactions';
 
 interface BalanceProps {
@@ -7,6 +7,7 @@ interface BalanceProps {
   isModalOpen: boolean;
   handleModalOpen: () => void;
   handleModalClose: () => void;
+  onTransactionSuccess: () => void;
 }
 
 const formatToBRL = (value: number) => {
@@ -16,7 +17,7 @@ const formatToBRL = (value: number) => {
   });
 };
 
-export default function Balance({ transactions, isModalOpen, handleModalOpen, handleModalClose }: BalanceProps) {
+export default function Balance({ transactions, isModalOpen, handleModalOpen, handleModalClose, onTransactionSuccess }: BalanceProps) {
   const [balance, setBalance] = useState<number>(0);
   const [lastTransactionDate, setLastTransactionDate] = useState<Date | null>(null);
 
@@ -64,7 +65,11 @@ export default function Balance({ transactions, isModalOpen, handleModalOpen, ha
       >
         Adicionar novo registro
       </button>
-      <AddProduct isOpen={isModalOpen} onClose={handleModalClose} />
+      <AddTransaction
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSuccess={onTransactionSuccess} // Passe a função de sucesso aqui
+      />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 function getApiUrl() {
-  return publicRuntimeConfig.REACT_APP_API_URL || 'http://localhost:3000';
+  return publicRuntimeConfig.REACT_APP_API_URL || 'http://localhost:4000';
 }
 
 function getStoreId() {

@@ -1,33 +1,36 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
-interface AddProductProps {
+interface AddTransactionProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void; 
 }
 
-export default function AddProduct({ isOpen, onClose }: AddProductProps) {
+export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransactionProps) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
-  const route = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
+
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
     const transaction = {
       description: name,
       value: parseFloat(price),
       date: new Date().toISOString(),
       category,
       type: 'Entrada',
-      userId: 1,
     };
 
-    const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
-
     try {
-      const response = await fetch('http://localhost:3000/transactions', {
+      const response = await fetch('http://localhost:4000/transactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,8 +43,8 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
         throw new Error('Erro ao adicionar transação');
       }
 
+      onSuccess();
       onClose();
-      route.refresh();
     } catch (error) {
       console.error(error);
     }
@@ -74,7 +77,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-50 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="bg-gray-500 border border-gray-600 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Digite o nome do produto"
                   required
                 />
@@ -109,9 +112,6 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
               type="submit"
               className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path>
-              </svg>
               Adicionar
             </button>
           </form>
