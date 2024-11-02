@@ -23,8 +23,6 @@ export default function RegisterForm() {
         { ...data, photo: 'https://google.com' },
       )
 
-      console.log('Response data:', response.data)
-
       if (response.status === 200) {
         router.push('/')
       } else {
