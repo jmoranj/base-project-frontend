@@ -1,24 +1,31 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 interface AddTransactionProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void; 
+  isOpen: boolean
+  onClose: () => void
+  onSuccess: () => void
 }
 
-export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransactionProps) {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+export default function AddTransaction({
+  isOpen,
+  onClose,
+  onSuccess,
+}: AddTransactionProps) {
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [category, setCategory] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('accessToken='))
+      ?.split('=')[1]
 
     if (!token) {
-      console.error('No token found');
-      return;
+      console.error('No token found')
+      return
     }
 
     const transaction = {
@@ -27,31 +34,33 @@ export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransa
       date: new Date().toISOString(),
       category,
       type: 'Entrada',
-    };
+    }
 
     try {
       const response = await fetch('http://localhost:4000/transactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(transaction),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Erro ao adicionar transação');
+        throw new Error('Erro ao adicionar transação')
       }
 
-      onSuccess();
-      onClose();
+      onSuccess()
+      onClose()
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   return (
-    <div className={`fixed inset-0 z-50 ${isOpen ? 'flex' : 'hidden'} justify-center items-center bg-black bg-opacity-50`}>
+    <div
+      className={`fixed inset-0 z-50 ${isOpen ? 'flex' : 'hidden'} justify-center items-center bg-black bg-opacity-50`}
+    >
       <div className="relative p-4 w-full max-w-md max-h-full">
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-600">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
@@ -63,15 +72,32 @@ export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransa
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
               onClick={onClose}
             >
-              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              <svg
+                className="w-3 h-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                />
               </svg>
             </button>
           </div>
           <form className="p-4 md:p-5" onSubmit={handleSubmit}>
             <div className="grid gap-4 mb-4 grid-cols-2">
               <div className="col-span-2">
-                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Nome
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -83,7 +109,12 @@ export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransa
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Preço</label>
+                <label
+                  htmlFor="price"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Preço
+                </label>
                 <input
                   type="number"
                   id="price"
@@ -95,14 +126,21 @@ export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransa
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Categoria</label>
+                <label
+                  htmlFor="category"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Categoria
+                </label>
                 <select
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
-                  <option value="" disabled>Selecionar categoria</option>
+                  <option value="" disabled>
+                    Selecionar categoria
+                  </option>
                   <option value="Saída">Saída</option>
                   <option value="Entrada">Entrada</option>
                 </select>
@@ -118,5 +156,5 @@ export default function AddTransaction({ isOpen, onClose, onSuccess }: AddTransa
         </div>
       </div>
     </div>
-  );
+  )
 }

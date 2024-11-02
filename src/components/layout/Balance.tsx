@@ -1,47 +1,57 @@
-import { useEffect, useState } from 'react';
-import AddTransaction from './AddTransaction';
-import { Transaction } from '@/types/transactions';
+import { useEffect, useState } from 'react'
+import AddTransaction from '../transaction/transactionContent/AddTransaction'
+import { Transaction } from '@/types/transactions'
 
 interface BalanceProps {
-  transactions: Transaction[];
-  isModalOpen: boolean;
-  handleModalOpen: () => void;
-  handleModalClose: () => void;
-  onTransactionSuccess: () => void;
+  transactions: Transaction[]
+  isModalOpen: boolean
+  handleModalOpen: () => void
+  handleModalClose: () => void
+  onTransactionSuccess: () => void
 }
 
 const formatToBRL = (value: number) => {
   return value.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  });
-};
+  })
+}
 
-export default function Balance({ transactions, isModalOpen, handleModalOpen, handleModalClose, onTransactionSuccess }: BalanceProps) {
-  const [balance, setBalance] = useState<number>(0);
-  const [lastTransactionDate, setLastTransactionDate] = useState<Date | null>(null);
+export default function Balance({
+  transactions,
+  isModalOpen,
+  handleModalOpen,
+  handleModalClose,
+  onTransactionSuccess,
+}: BalanceProps) {
+  const [balance, setBalance] = useState<number>(0)
+  const [lastTransactionDate, setLastTransactionDate] = useState<Date | null>(
+    null,
+  )
 
   useEffect(() => {
     const calculateBalance = () => {
       const totalBalance = transactions.reduce((acc, transaction) => {
-        return transaction.category === 'Entrada' ? acc + transaction.value : acc - transaction.value;
-      }, 0);
-      setBalance(totalBalance);
-    };
+        return transaction.category === 'Entrada'
+          ? acc + transaction.value
+          : acc - transaction.value
+      }, 0)
+      setBalance(totalBalance)
+    }
 
     const findLastTransactionDate = () => {
       if (transactions.length > 0) {
         const latestDate = transactions.reduce((latest, transaction) => {
-          const transactionDate = new Date(transaction.date);
-          return transactionDate > latest ? transactionDate : latest;
-        }, new Date(transactions[0].date));
-        setLastTransactionDate(latestDate);
+          const transactionDate = new Date(transaction.date)
+          return transactionDate > latest ? transactionDate : latest
+        }, new Date(transactions[0].date))
+        setLastTransactionDate(latestDate)
       }
-    };
+    }
 
-    calculateBalance();
-    findLastTransactionDate();
-  }, [transactions]);
+    calculateBalance()
+    findLastTransactionDate()
+  }, [transactions])
 
   return (
     <div className="bg-gray-50 rounded-lg py-6 px-4 sm:px-6 sm:flex sm:items-center sm:justify-between sm:space-x-6 lg:space-x-8">
@@ -49,14 +59,16 @@ export default function Balance({ transactions, isModalOpen, handleModalOpen, ha
         <div className="flex justify-between sm:block">
           <dt className="font-medium text-gray-900">Último registro</dt>
           <dd className="sm:mt-1">
-            <time>{lastTransactionDate ? lastTransactionDate.toLocaleDateString() : "N/A"}</time>
+            <time>
+              {lastTransactionDate
+                ? lastTransactionDate.toLocaleDateString()
+                : 'N/A'}
+            </time>
           </dd>
         </div>
         <div className="flex justify-between pt-6 font-medium text-gray-900 sm:block sm:pt-0">
           <dt>Saldo atual</dt>
-          <dd className="sm:mt-1">
-            {formatToBRL(balance)}
-          </dd>
+          <dd className="sm:mt-1">{formatToBRL(balance)}</dd>
         </div>
       </dl>
       <button
@@ -71,5 +83,5 @@ export default function Balance({ transactions, isModalOpen, handleModalOpen, ha
         onSuccess={onTransactionSuccess} // Passe a função de sucesso aqui
       />
     </div>
-  );
+  )
 }
