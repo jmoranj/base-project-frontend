@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
     "axios": "^1.7.2",
     "cookies-next": "^4.2.1",
     "js-cookie": "^3.0.5",
@@ -17,7 +18,8 @@
     "next-cookies": "^2.0.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.52.1"
+    "react-hook-form": "^7.52.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",

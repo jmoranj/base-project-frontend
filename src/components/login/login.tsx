@@ -1,13 +1,13 @@
 'use client'
-
-import React from 'react'
-import Link from 'next/link'
-import { useForm, SubmitHandler } from 'react-hook-form'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import React from 'react'
+import Link from 'next/link'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-import { LoginFormData } from '@/types/users'
+import { loginSchema, type LoginFormData } from '@/schemas/registerSchema'
 
 export default function Login() {
   const {
@@ -15,11 +15,12 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<LoginFormData>()
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
   const router = useRouter()
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    console.log('Login data submitted:', data)
     try {
       const response = await axios.post(
         'http://localhost:4000/users/login',
@@ -27,37 +28,28 @@ export default function Login() {
         { withCredentials: true },
       )
 
-      console.log('Response data:', response.data)
-
       const { token } = response.data
-      console.log('Token received:', token)
 
       if (token) {
         Cookies.set('accessToken', token, { expires: 1 })
-
         router.push('/')
-      } else {
-        console.error('No token received')
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const apiErrors = error.response?.data?.errors
-        if (apiErrors) {
-          Object.keys(apiErrors).forEach((key) => {
-            setError(key as keyof LoginFormData, {
-              type: 'manual',
-              message: apiErrors[key],
-            })
+        if (error.response?.status === 401) {
+          setError('root', {
+            type: 'manual',
+            message: 'Email ou senha incorretos',
           })
         } else {
-          console.error('API Error:', error.message)
+          setError('root', {
+            type: 'manual',
+            message: 'Erro ao fazer login. Tente novamente.',
+          })
         }
-      } else {
-        console.error('Unknown error:', error)
       }
     }
   }
-
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 bg-gray-50">
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -77,11 +69,13 @@ export default function Login() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                {...register('email', { required: 'Email is required' })}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...register('email')}
+                className="block w-full rounded-md border-0 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
               {errors.email && (
-                <span className="text-red-500">{errors.email.message}</span>
+                <span className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </span>
               )}
             </div>
           </div>
@@ -98,14 +92,22 @@ export default function Login() {
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                {...register('password', { required: 'Password is required' })}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...register('password')}
+                className="block w-full rounded-md border-0 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
               {errors.password && (
-                <span className="text-red-500">{errors.password.message}</span>
+                <span className="text-red-500 text-xs mt-1">
+                  {errors.password.message}
+                </span>
               )}
             </div>
           </div>
+
+          {errors.root && (
+            <div className="p-2 text-center bg-red-100 border border-red-400 text-red-700 rounded">
+              {errors.root.message}
+            </div>
+          )}
 
           <button
             type="submit"
