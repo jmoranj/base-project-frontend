@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Transaction } from '@/types/transactions'
-import UpdateTransaction from './updateTransaction/UpdateTransaction'
+import UpdateTransaction from './updateProduct/UpdateTransaction'
 
 interface ITransactionTable {
   transactions: Transaction[]
-}
-
-const formatToBRL = (value: number) => {
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  })
 }
 
 export default function TransactionTable({ transactions }: ITransactionTable) {
@@ -106,7 +99,7 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
                       scope="col"
                       className="hidden w-1/5 pr-8 py-3 font-normal text-right sm:table-cell"
                     >
-                      Preço
+                      Quantidade
                     </th>
                     <th
                       scope="col"
@@ -131,16 +124,14 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
                             <div className="font-medium text-gray-900">
                               {item.description}
                             </div>
-                            <div className="mt-1 sm:hidden">
-                              {formatToBRL(item.value)}
-                            </div>
+                            <div className="mt-1 sm:hidden">{item.value}</div>
                           </div>
                         </div>
                       </td>
                       <td
                         className={`py-6 pr-8 ${getPriceColor(item.category)} hidden sm:table-cell text-right`}
                       >
-                        {formatToBRL(item.value)}
+                        {item.value}
                       </td>
                       <td className="hidden py-6 pr-8 text-right sm:table-cell">
                         {new Date(item.date).toLocaleDateString()}

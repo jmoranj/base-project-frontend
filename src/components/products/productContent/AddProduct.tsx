@@ -12,7 +12,7 @@ export default function AddTransaction({
   onSuccess,
 }: AddTransactionProps) {
   const [name, setName] = useState('')
-  const [price, setPrice] = useState('')
+  const [quantity, setQuantity] = useState('') // Alterado para quantidade
   const [category, setCategory] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +30,7 @@ export default function AddTransaction({
 
     const transaction = {
       description: name,
-      value: parseFloat(price),
+      quantity: parseInt(quantity), // Alterado para quantidade
       date: new Date().toISOString(),
       category,
       type: 'Entrada',
@@ -110,18 +110,18 @@ export default function AddTransaction({
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <label
-                  htmlFor="price"
+                  htmlFor="quantity"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Preço
+                  Quantidade
                 </label>
                 <input
                   type="number"
-                  id="price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  id="quantity"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="$2999"
+                  placeholder="Quantidade de produtos"
                   required
                 />
               </div>

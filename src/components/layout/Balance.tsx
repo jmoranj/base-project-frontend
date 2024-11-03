@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import AddTransaction from '../transaction/transactionContent/AddTransaction'
+import AddTransaction from '../products/productContent/AddProduct'
 import { Transaction } from '@/types/transactions'
 
 interface BalanceProps {
@@ -10,13 +10,6 @@ interface BalanceProps {
   onTransactionSuccess: () => void
 }
 
-const formatToBRL = (value: number) => {
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  })
-}
-
 export default function Balance({
   transactions,
   isModalOpen,
@@ -24,19 +17,19 @@ export default function Balance({
   handleModalClose,
   onTransactionSuccess,
 }: BalanceProps) {
-  const [balance, setBalance] = useState<number>(0)
+  const [stock, setStock] = useState<number>(0)
   const [lastTransactionDate, setLastTransactionDate] = useState<Date | null>(
     null,
   )
 
   useEffect(() => {
-    const calculateBalance = () => {
-      const totalBalance = transactions.reduce((acc, transaction) => {
+    const calculateStock = () => {
+      const totalStock = transactions.reduce((acc, transaction) => {
         return transaction.category === 'Entrada'
           ? acc + transaction.value
           : acc - transaction.value
       }, 0)
-      setBalance(totalBalance)
+      setStock(totalStock)
     }
 
     const findLastTransactionDate = () => {
@@ -49,7 +42,7 @@ export default function Balance({
       }
     }
 
-    calculateBalance()
+    calculateStock()
     findLastTransactionDate()
   }, [transactions])
 
@@ -67,20 +60,20 @@ export default function Balance({
           </dd>
         </div>
         <div className="flex justify-between pt-6 font-medium text-gray-900 sm:block sm:pt-0">
-          <dt>Saldo atual</dt>
-          <dd className="sm:mt-1">{formatToBRL(balance)}</dd>
+          <dt>Estoque disponível</dt>
+          <dd className="sm:mt-1">{stock}</dd>
         </div>
       </dl>
       <button
         onClick={handleModalOpen}
         className="w-full flex items-center justify-center bg-white mt-6 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:mt-0"
       >
-        Adicionar novo registro
+        Adicionar novo produto
       </button>
       <AddTransaction
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        onSuccess={onTransactionSuccess} // Passe a função de sucesso aqui
+        onSuccess={onTransactionSuccess}
       />
     </div>
   )
