@@ -1,8 +1,12 @@
 #MANUAL DE INSTRUÇÃO
 
-```npm i @types/node```
+Primeiramente rode o seguinte comando no terminal:
 
-  `npm run dev` Para rodar
+  `npm i @types/node`
+
+Para rodar:
+
+  `npm run dev`
 
 
   ______________________________________________________
