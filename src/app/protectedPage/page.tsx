@@ -1,7 +1,7 @@
 // pages/protectedPage.js
 import { useEffect, useState } from 'react'
 import api from '../../api/api'
-import AuthReq from '../../../utils/auth-req'
+import AuthReq from '../../utils/auth-req'
 import { NextPageContext } from 'next'
 
 const ProtectedPage = () => {

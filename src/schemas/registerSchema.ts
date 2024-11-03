@@ -11,24 +11,17 @@ export const registerSchema = z
       .regex(/[A-Z]/, 'Senha deve ter pelo menos uma letra maiúscula')
       .regex(/[0-9]/, 'Senha deve ter pelo menos um número'),
     confirmPassword: z.string(),
-    photo: z
-      .instanceof(FileList)
-      .refine((files) => files.length > 0, 'Foto é obrigatória')
-      .refine(
-        (files) => files[0]?.type.startsWith('image/'),
-        'Arquivo deve ser uma imagem',
-      ),
+    photo: z.any(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Senhas não conferem',
     path: ['confirmPassword'],
   })
 
-export type RegisterFormData = z.infer<typeof registerSchema>
-
 export const loginSchema = z.object({
-  email: z.string().email('Email inválido').min(1, 'Email é obrigatório'),
+  email: z.string().email('Email inválido'),
   password: z.string().min(1, 'Senha é obrigatória'),
 })
 
+export type RegisterFormData = z.infer<typeof registerSchema>
 export type LoginFormData = z.infer<typeof loginSchema>

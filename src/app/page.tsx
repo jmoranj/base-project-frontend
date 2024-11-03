@@ -11,7 +11,7 @@ import Balance from '@/components/layout/Balance'
 import TransactionContainer from '@/components/transaction/TransactionContainer'
 import api from '../api/api'
 import { Transaction } from '@/types/transactions'
-import AuthReq from '../../utils/auth-req'
+import AuthReq from '../utils/auth-req'
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([])

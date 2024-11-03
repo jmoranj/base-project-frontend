@@ -76,7 +76,9 @@ export default function RegisterForm() {
               Mínimo de 2 caracteres
             </span>
             {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
+              <span className="text-red-500">
+                {errors.name.message as React.ReactNode}
+              </span>
             )}
           </div>
 
@@ -95,7 +97,9 @@ export default function RegisterForm() {
               Idade mínima: 18 anos
             </span>
             {errors.age && (
-              <span className="text-red-500">{errors.age.message}</span>
+              <span className="text-red-500">
+                {errors.age.message as React.ReactNode}
+              </span>
             )}
           </div>
 
@@ -115,7 +119,9 @@ export default function RegisterForm() {
               Apenas arquivos de imagem são aceitos
             </span>
             {errors.photo && (
-              <span className="text-red-500">{errors.photo.message}</span>
+              <span className="text-red-500">
+                {errors.photo.message as React.ReactNode}
+              </span>
             )}
           </div>
 
@@ -134,7 +140,9 @@ export default function RegisterForm() {
               Digite um email válido
             </span>
             {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
+              <span className="text-red-500">
+                {errors.email.message as React.ReactNode}
+              </span>
             )}
           </div>
 
@@ -158,7 +166,9 @@ export default function RegisterForm() {
               </ul>
             </div>
             {errors.password && (
-              <span className="text-red-500">{errors.password.message}</span>
+              <span className="text-red-500">
+                {errors.password.message as React.ReactNode}
+              </span>
             )}
           </div>
 
@@ -178,7 +188,7 @@ export default function RegisterForm() {
             </span>
             {errors.confirmPassword && (
               <span className="text-red-500">
-                {errors.confirmPassword.message}
+                {errors.confirmPassword.message as React.ReactNode}
               </span>
             )}
           </div>
