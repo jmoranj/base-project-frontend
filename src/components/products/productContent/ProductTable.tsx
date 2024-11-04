@@ -172,7 +172,7 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
                       scope="col"
                       className="px-4 py-3 font-normal text-center"
                     >
-                      Valor
+                      Valor Unidade
                     </th>
                     <th
                       scope="col"

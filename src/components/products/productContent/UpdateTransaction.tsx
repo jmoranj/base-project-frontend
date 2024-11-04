@@ -178,7 +178,7 @@ const UpdateTransaction: React.FC<UpdateTransactionProps> = ({
 
           <div className="col-span-2 sm:col-span-1">
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Preço
+              Valor unidade
             </label>
             <input
               type="number"
