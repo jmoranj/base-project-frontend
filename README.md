@@ -1,30 +1,23 @@
-Tutorial de Uso do Projeto Base Frontend
-Pré-requisitos
-Node.js instalado
-NPM (Node Package Manager)
-Configuração Inicial
-Clone o repositório e instale as dependências:
+# Tutorial de Uso do Projeto Base Frontend
+
+# Pré-requisitos
+- Node.js instalado
+- NPM (Node Package Manager)
+- Configuração Inicial
+- Clone o repositório e instale as dependências:
+
+```
 npm install
 
-Copy
-
-Execute
 
 Instale os tipos do Node conforme indicado no README:
 npm i @types/node
 
-Copy
-
-Execute
 
 Desenvolvimento
 Para iniciar o servidor de desenvolvimento:
 
 npm run dev
-
-Copy
-
-Execute
 
 Arquivos Ignorados (.gitignore)
 O projeto já está configurado para ignorar:
@@ -43,3 +36,4 @@ Estrutura
 O projeto segue a estrutura padrão de um projeto Next.js com TypeScript, pronto para desenvolvimento frontend.
 
 Agora você está pronto para começar a desenvolver! O servidor de desenvolvimento oferece hot-reload, então as alterações serão refletidas automaticamente no navegador.
+```
