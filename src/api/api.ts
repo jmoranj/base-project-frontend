@@ -1,24 +1,22 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import Cookies from 'js-cookie'
 
-const api = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
 })
 
 const refreshAccessToken = async () => {
   try {
-    const response = await api.post('/users/refresh-token')
+    const response = await axiosInstance.post('/users/refresh-token')
     const newAccessToken = response.data.token
-
     Cookies.set('accessToken', newAccessToken, { expires: 1 })
-
     return newAccessToken
   } catch (error) {
     console.error('Error refreshing access token', error)
   }
 }
 
-api.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (req) => {
     const token = Cookies.get('accessToken')
     if (token) {
@@ -32,27 +30,21 @@ api.interceptors.request.use(
   },
 )
 
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response && error.response.status === 401) {
-      console.log('Unauthorized - Redirecting to login')
+      console.log('Unauthorized - Attempting token refresh')
       const newAccessToken = await refreshAccessToken()
 
       if (newAccessToken) {
         error.config.headers.Authorization = `Bearer ${newAccessToken}`
-
-        return api.request(error.config)
+        return axiosInstance.request(error.config)
       } else {
         console.log('Failed to refresh token - Redirecting to Login')
-
         if (typeof window !== 'undefined') {
           window.location.href = '/login'
         }
-      }
-
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login'
       }
     }
     console.error('Response Error:', error)
@@ -60,4 +52,4 @@ api.interceptors.response.use(
   },
 )
 
-export default api
+export default axiosInstance

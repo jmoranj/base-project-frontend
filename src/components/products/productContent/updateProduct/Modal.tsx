@@ -7,11 +7,19 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+  const handleContentClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
   return (
     <div
       className={`fixed inset-0 z-50 ${isOpen ? 'flex' : 'hidden'} justify-center items-center bg-black bg-opacity-50`}
+      onClick={onClose}
     >
-      <div className="relative p-4 w-full max-w-md max-h-full">
+      <div
+        className="relative p-4 w-full max-w-md max-h-full"
+        onClick={handleContentClick}
+      >
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-600">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">

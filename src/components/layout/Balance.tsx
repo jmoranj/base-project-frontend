@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import AddTransaction from '../products/productContent/AddProduct'
-import { Transaction } from '@/types/transactions'
+import { UpdateProductFormData } from '@/schemas/productSchema'
 
 interface BalanceProps {
-  transactions: Transaction[]
+  transactions: (UpdateProductFormData & { date: string })[]
   isModalOpen: boolean
   handleModalOpen: () => void
   handleModalClose: () => void
@@ -25,9 +25,8 @@ export default function Balance({
   useEffect(() => {
     const calculateStock = () => {
       const totalStock = transactions.reduce((acc, transaction) => {
-        return transaction.category === 'Entrada'
-          ? acc + transaction.value
-          : acc - transaction.value
+        const value = transaction.value * transaction.quantity
+        return transaction.category === 'Entrada' ? acc + value : acc - value
       }, 0)
       setStock(totalStock)
     }
@@ -54,14 +53,19 @@ export default function Balance({
           <dd className="sm:mt-1">
             <time>
               {lastTransactionDate
-                ? lastTransactionDate.toLocaleDateString()
+                ? lastTransactionDate.toLocaleDateString('pt-BR')
                 : 'N/A'}
             </time>
           </dd>
         </div>
         <div className="flex justify-between pt-6 font-medium text-gray-900 sm:block sm:pt-0">
-          <dt>Estoque disponível</dt>
-          <dd className="sm:mt-1">{stock}</dd>
+          <dt>Faturamento</dt>
+          <dd className="sm:mt-1">
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(stock)}
+          </dd>
         </div>
       </dl>
       <button

@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Transaction } from '@/types/transactions'
 import UpdateTransaction from './updateProduct/UpdateTransaction'
+import Cookies from 'js-cookie'
+import { UpdateProductFormData } from '@/schemas/productSchema'
+
+interface Transaction extends UpdateProductFormData {
+  imagePath: string
+  imageUrl?: string
+}
 
 interface ITransactionTable {
   transactions: Transaction[]
@@ -10,11 +16,17 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null)
-  const [userTransactions, setUserTransactions] =
-    useState<Transaction[]>(transactions)
+  const [userTransactions, setUserTransactions] = useState<Transaction[]>([])
 
   useEffect(() => {
-    setUserTransactions(transactions)
+    const transactionsWithImageUrls = transactions.map((transaction) => ({
+      ...transaction,
+      imageUrl: transaction.imagePath
+        ? `http://localhost:4000${transaction.imagePath}`
+        : undefined,
+    }))
+    console.log('Processed transactions:', transactionsWithImageUrls)
+    setUserTransactions(transactionsWithImageUrls)
   }, [transactions])
 
   const handleModalOpen = (transaction: Transaction) => {
@@ -27,48 +39,56 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
     setSelectedTransaction(null)
   }
 
-  const handleUpdate = async (UpdateTransaction: Transaction) => {
-    console.log('Transação atualizada:', UpdateTransaction)
+  const formatPrice = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value)
+  }
 
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('accessToken='))
-      ?.split('=')[1]
-
-    if (!token) {
-      console.error('No token found')
-      return
-    }
+  const handleUpdate = async (
+    updatedTransaction: Omit<Transaction, 'imagePath'> & { image?: FileList },
+  ) => {
+    const token = Cookies.get('accessToken')
+    if (!token) return
 
     try {
-      const response = await fetch(
-        `http://localhost:4000/transactions/${UpdateTransaction.id}`,
+      const formData = new FormData()
+      formData.append('description', updatedTransaction.description)
+      formData.append('value', updatedTransaction.value.toString())
+      formData.append('quantity', updatedTransaction.quantity.toString())
+      formData.append('category', updatedTransaction.category)
+      formData.append('date', new Date().toISOString())
+
+      if (
+        updatedTransaction.image instanceof FileList &&
+        updatedTransaction.image[0]
+      ) {
+        formData.append('image', updatedTransaction.image[0])
+      }
+
+      await fetch(
+        `http://localhost:4000/transactions/${updatedTransaction.id}`,
         {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(UpdateTransaction),
+          body: formData,
         },
       )
 
-      if (!response.ok) {
-        throw new Error('Erro ao atualizar transação')
-      }
-
-      setUserTransactions((prevTransactions) =>
-        prevTransactions.map((transaction) =>
-          transaction.id === UpdateTransaction.id
-            ? UpdateTransaction
-            : transaction,
-        ),
-      )
+      setTimeout(() => {
+        handleModalClose()
+        window.location.reload()
+      }, 200)
     } catch (error) {
-      console.error('Error updating transaction:', error)
+      setTimeout(() => {
+        handleModalClose()
+        window.location.reload()
+      }, 200)
     }
   }
-
   const getPriceColor = (type: string) => {
     switch (type) {
       case 'Entrada':
@@ -85,61 +105,117 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
       <div className="container mx-auto px-4 py-8">
         <section aria-labelledby="recent-heading" className="mt-16">
           <div className="space-y-20">
-            <div>
-              <table className="mt-4 w-full text-gray-500 sm:mt-6">
-                <thead className="sr-only text-sm text-gray-500 text-left sm:not-sr-only">
+            <div className="sm:hidden">
+              {userTransactions.map((item) => (
+                <div
+                  key={item.id}
+                  className="mb-4 p-4 border rounded-lg shadow"
+                >
+                  <div className="flex items-center space-x-4">
+                    {item.imageUrl && (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.description}
+                        className="w-16 h-16 object-cover rounded-lg"
+                        onError={(e) => {
+                          console.log('Image load error:', e)
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                        }}
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-2">
+                        <h3 className="font-medium text-gray-900">
+                          {item.description}
+                        </h3>
+                        <button
+                          onClick={() => handleModalOpen(item)}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          Editar
+                        </button>
+                      </div>
+                      <div
+                        className={`${getPriceColor(item.category)} font-medium`}
+                      >
+                        {formatPrice(item.value)}
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        Quantidade: {item.quantity}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-gray-500">
+                <thead className="text-sm text-gray-500 text-left">
                   <tr>
+                    <th scope="col" className="w-32 px-4 py-3 font-normal">
+                      Imagem
+                    </th>
                     <th
                       scope="col"
-                      className="sm:w-2/5 lg:w-1/3 pr-8 py-3 font-normal text-left"
+                      className="w-2/5 lg:w-1/3 px-4 py-3 font-normal"
                     >
                       Produto
                     </th>
                     <th
                       scope="col"
-                      className="hidden w-1/5 pr-8 py-3 font-normal text-right sm:table-cell"
+                      className="w-1/5 px-4 py-3 font-normal text-center"
                     >
                       Quantidade
                     </th>
                     <th
                       scope="col"
-                      className="hidden pr-8 py-3 font-normal text-right sm:table-cell"
+                      className="px-4 py-3 font-normal text-center"
                     >
-                      Data
+                      Valor
                     </th>
                     <th
                       scope="col"
-                      className="pr-8 py-3 font-normal text-right"
+                      className="px-4 py-3 font-normal text-center"
                     >
                       Ações
                     </th>
                   </tr>
                 </thead>
-                <tbody className="border-b border-gray-200 divide-y divide-gray-200 text-sm sm:border-t">
+                <tbody className="border-b border-gray-200 divide-y divide-gray-200 text-sm border-t">
                   {userTransactions.map((item) => (
                     <tr key={item.id}>
-                      <td className="py-6 pr-8 text-left">
-                        <div className="flex items-center">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {item.description}
-                            </div>
-                            <div className="mt-1 sm:hidden">{item.value}</div>
+                      <td className="px-4 py-4">
+                        {item.imageUrl && (
+                          <div className="w-16 h-16 min-w-[4rem]">
+                            <img
+                              src={item.imageUrl}
+                              alt={item.description}
+                              className="w-full h-full object-cover rounded-lg"
+                              onError={(e) => {
+                                console.log('Image load error:', e)
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                              }}
+                            />
                           </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="font-medium text-gray-900">
+                          {item.description}
                         </div>
                       </td>
+                      <td className="px-4 py-4 text-center">{item.quantity}</td>
                       <td
-                        className={`py-6 pr-8 ${getPriceColor(item.category)} hidden sm:table-cell text-right`}
+                        className={`px-4 py-4 ${getPriceColor(item.category)} text-center`}
                       >
-                        {item.value}
+                        {formatPrice(item.value)}
                       </td>
-                      <td className="hidden py-6 pr-8 text-right sm:table-cell">
-                        {new Date(item.date).toLocaleDateString()}
-                      </td>
-                      <td className="py-6 font-medium text-right whitespace-nowrap">
+                      <td className="px-4 py-4 text-center">
                         <button
                           onClick={() => handleModalOpen(item)}
-                          className="text-blue-500 hover:text-blue-700"
+                          className="text-blue-500 hover:text-blue-700 inline-flex items-center justify-center"
                         >
                           Editar
                         </button>
@@ -152,7 +228,6 @@ export default function TransactionTable({ transactions }: ITransactionTable) {
           </div>
         </section>
       </div>
-
       {selectedTransaction && (
         <UpdateTransaction
           isOpen={isModalOpen}

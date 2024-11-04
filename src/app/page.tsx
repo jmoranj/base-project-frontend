@@ -6,11 +6,11 @@ import { NextPageContext } from 'next'
 
 import Layout from '@/components/layout/Layout'
 import Title from '@/components/layout/Title'
-import TransactionTable from '@/components/products/productContent/TransactionTable'
+import TransactionTable from '@/components/products/productContent/ProductTable'
 import Balance from '@/components/layout/Balance'
-import TransactionContainer from '@/components/products/TransactionContainer'
+import TransactionContainer from '@/components/products/ProductContainer'
 import api from '../api/api'
-import { Transaction } from '@/types/transactions'
+import { Transaction } from '@/types/transaction'
 import AuthReq from '../utils/auth-req'
 
 export default function Home() {
