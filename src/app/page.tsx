@@ -3,18 +3,16 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { NextPageContext } from 'next'
-
 import Layout from '@/components/layout/Layout'
 import Title from '@/components/layout/Title'
 import TransactionTable from '@/components/products/productContent/ProductTable'
 import Balance from '@/components/layout/Balance'
 import TransactionContainer from '@/components/products/ProductContainer'
 import api from '../api/api'
-import { Transaction } from '@/types/transaction'
 import AuthReq from '../utils/auth-req'
 
 export default function Home() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
 

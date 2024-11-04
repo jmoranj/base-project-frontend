@@ -13,7 +13,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 ${isOpen ? 'flex' : 'hidden'} justify-center items-center bg-black bg-opacity-50`}
+      className={`fixed top-0 left-0 right-0 bottom-0 w-screen h-screen overflow-x-hidden z-50 ${
+        isOpen ? 'flex' : 'hidden'
+      } justify-center items-center bg-black bg-opacity-50`}
       onClick={onClose}
     >
       <div
@@ -23,7 +25,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-600">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Atualizar
+              Preencha
             </h3>
             <button
               type="button"

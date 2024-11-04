@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import UpdateTransaction from './updateProduct/UpdateTransaction'
+import UpdateTransaction from './UpdateTransaction'
 import Cookies from 'js-cookie'
 import { UpdateProductFormData } from '@/schemas/productSchema'
 
